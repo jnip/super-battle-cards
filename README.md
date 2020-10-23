@@ -1,6 +1,11 @@
 # super-battle-cards
 A recreation of the game Super Battle Cards that plays in the browser.
 
+### Requirements
+###### In order to run this app there are a couple of things that must be added.
+ - You must supply your own assets (see public/images/README.md)
+ - You must connect it to your own database (NoSQL may work out of the box) at models/.helper/WebService.java
+
 ### Version 0.9
 ###### Player & Access Limitations
 - No external network connections allowed.
