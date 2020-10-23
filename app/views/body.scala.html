@@ -1,0 +1,37 @@
+@()
+
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/body.css")">
+<!-- Use webworkers! -->
+<!-- Use self._ = {internalFun: function(){}, ...} -->
+
+@main("Super Battle Cards") {
+  <div id="board-container" data-bind="foreach: board">
+    <span class="inner-container" data-bind="foreach: $data">
+      <span class="wrap">
+        <!-- Image for board component -->
+        <img data-bind='attr: {src: $root.getImageLink($data)}, click:function(data) { $root.clicked(data, $index, $parentContext.$index)}' onerror="this.onerror=null; this.src='/assets/images/empty.png'">
+
+        <!-- Add health / item-value  -->
+        <!-- ...optional highlighting -->
+        <div data-bind="if: !$data.maxHealth && $root.showImageValue($data)" class="hexagon-overlay">
+          <div class="diamond-shape">
+            <div class="component-value" data-bind="text: $data.health || $data.value, css: { glow: !!$data.health && !!$data.state }">?</div>
+          </div>
+        </div>
+
+        <!-- For Heroes, add health  -->
+        <div data-bind="if: $data.maxHealth" class="hexagon-overlay heroHP">
+          <div class="diamond-shape heroHP">
+            <div class="component-value heroHP" data-bind="text: health+' / '+maxHealth">?</div>
+          </div>
+        </div>
+
+        <!-- Add counter -->
+        <div class="counter-overlay" data-bind="visible: $data.counter, text: $data.counter">?</div>
+
+        <!-- Add armour -->
+        <div class="counter-overlay" data-bind="visible: $data.armour, text: $data.armour">?</div>
+      </span>
+    </span>
+  </div>
+}

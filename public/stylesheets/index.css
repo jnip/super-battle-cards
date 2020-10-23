@@ -1,0 +1,66 @@
+.inner-container {
+  display: flex;
+  min-width: 25px;
+  min-height: 25px;
+  justify-content: center;
+}
+
+.inner-container > .wrap > img {
+  height: 100%;
+  object-fit: contain;
+  min-width: 5px;
+  min-height: 5px;
+}
+
+/* Overlay: bottom right corner */
+.counter-overlay {
+  position: absolute;
+  bottom: 3px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  background: grey;
+  color: white;
+  text-align: center;
+  line-height: 22px;
+  border-radius: 100%;
+}
+
+/* Overlay: top of container, centered horizontally */
+.hexagon-overlay {
+  position: absolute; 
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+
+  /* Transform diamond into hexagon */
+  overflow: hidden; 
+
+  /* Size of hexagon */
+  width: 30px;
+  height: 30px;
+
+  /* Font size and alignment */
+  line-height: 30px;
+  font-size: 24px;
+  text-align: center;
+  color: white;
+}
+/*USER SCSS to keep all sizes aligned... dynamic update?*/
+.diamond-shape {
+  background: grey;
+  transform:rotate(-45deg);
+  width: 30px;
+  height: 30px;
+}
+.component-value {
+  transform:rotate(45deg);
+  width: 30px;
+  height: 30px;
+}
+.heroHP {
+  overflow: visible;
+  width: 100%;
+  transform: rotate(0);
+  left: 0;
+}

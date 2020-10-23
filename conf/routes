@@ -1,0 +1,19 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+
+# Redirects
+GET /       controllers.Application.customRedirect(name ?= "default", gameId: Integer ?= 0)                   
+GET /$id<[0-9]+>  controllers.Application.customRedirect(name ?= "default", id: Integer) 
+GET /:name  controllers.Application.customRedirect(name, gameId: Integer ?= 0)    
+GET /$id<[0-9]+>/:name  controllers.Application.customRedirect(name, id: Integer) 
+
+
+# Process request
+GET /:name/$id<[0-9]+>  controllers.HomeController.index(request: Request, name, id: Integer)
+
+GET /play/:name/:id  controllers.HomeController.nextMove(name:String, id: Integer, move ?= "none")
