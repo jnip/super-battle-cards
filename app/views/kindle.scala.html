@@ -1,0 +1,21 @@
+@{/*
+  Kindle uses old broswer...
+    - Jquery 3.2.1 or older
+    - single clicks only, will not register touch movement
+      - mouseup and mousedown always in the same position
+    - invalid:
+      - let
+      - classes
+      - arrow functions
+      - function default parameters
+      - for (x of y) {}
+      - the alternative to double quotes: `this is a String with ${var}`
+*/}
+@()
+
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/kindle.css")">
+
+@body()
+
+<script src="@routes.Assets.versioned("javascripts/boardController.js")" type="text/javascript"></script>
+
