@@ -140,7 +140,7 @@ public class GameBoard {
       for (int y = 0; y < this.height; y++) {
         if (this.board[y][x].isDestroyed) {
           this.registerKill(this.board[y][x]);
-          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled);
+          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled, this.board[y][x]);
         }
       }
     }
@@ -161,12 +161,7 @@ public class GameBoard {
       for (int y = 0; y < this.height; y++) {
         if (this.board[y][x].isDestroyed) {
           this.registerKill(this.board[y][x]);
-          if (this.board[y][x] instanceof Monster) {
-            this.board[y][x] = SpawnManager.getReward(turn, bossesKilled);
-          }
-          else {
-            this.board[y][x] = SpawnManager.getOpenPath();
-          }
+          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled, this.board[y][x]);
         }
       }
     }

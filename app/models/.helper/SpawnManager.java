@@ -37,12 +37,13 @@ public class SpawnManager {
     return new DefaultBoss(turn, bossesDefeated);
   }
 
-  public static Path getOpenPath() {
+  public static GameBoardComponent getReward(int turn, int bossesDefeated, GameBoardComponent destroyedComponent) {
+    // Only give reward to monster kills
+    if (destroyedComponent instanceof Monster) {
+      return getNext(turn, bossesDefeated, true);
+    }
+    // Otherwise return neutral tile
     return new OpenPath();
-  }
-
-  public static GameBoardComponent getReward(int turn, int bossesDefeated) {
-    return getNext(turn, bossesDefeated, true);
   }
 
   public static GameBoardComponent getNext(int turn, int bossesDefeated) {
