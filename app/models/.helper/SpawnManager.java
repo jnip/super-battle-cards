@@ -39,11 +39,12 @@ public class SpawnManager {
   }
 
   public static GameBoardComponent getReward(int turn, int bossesDefeated, GameBoardComponent destroyedComponent) {
-    // Only give reward to monster kills
+    if (destroyedComponent instanceof EnragedBoss) {
+      return new Arrow(turn, bossesDefeated);
+    }
     if (destroyedComponent instanceof Monster) {
       return getNext(turn, bossesDefeated, true);
     }
-    // Otherwise return neutral tile
     return new OpenPath();
   }
 

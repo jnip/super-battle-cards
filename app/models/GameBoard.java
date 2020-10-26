@@ -77,6 +77,9 @@ public class GameBoard {
       if (bossCounter <= 1 && this.findBoss() == null && !(removedComponent instanceof Boss)) {
         this.board[empty[1]][empty[0]] = SpawnManager.getBoss(turn, bossesKilled);
       }
+      else if (removedComponent instanceof EnragedBoss) {
+        this.board[empty[1]][empty[0]] = SpawnManager.getReward(turn, bossesKilled, removedComponent);
+      }
       else {
         this.board[empty[1]][empty[0]] = SpawnManager.getNext(turn, bossesKilled);
       }
@@ -188,17 +191,30 @@ public class GameBoard {
   }
 
   private void tictok() {
-    this.bossCounter--;
     for (int i = 0; i < this.height; i++) {
       for (int j = 0; j < this.width; j++) {
-        if (this.board[i][j].preventNextTictok) {
-          this.board[i][j].preventNextTictok = false;
+        if (!this.board[i][j].preventNextTictok) {
+          this.board[i][j].beforeTictok(this, j, i);
         }
-        else {
+      }
+    }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (!this.board[i][j].preventNextTictok) {
           this.board[i][j].tictok(this, j, i);
         }
       }
     }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (!this.board[i][j].preventNextTictok) {
+          this.board[i][j].afterTictok(this, j, i);
+        }
+        // Careful not to delete this
+        this.board[i][j].preventNextTictok = false;
+      }
+    }
+    this.bossCounter--;
     this.turn++;
   }
 
