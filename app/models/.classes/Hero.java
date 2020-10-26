@@ -22,6 +22,19 @@ public class Hero extends GameBoardComponent {
     this.timeSinceBossKill = 0;
   }
 
+  public void killedEnragedBoss() {
+    int recovery = this.maxHealth/2;
+    int damageSustained = this.maxHealth - this.health;
+    int shieldReward = recovery - damageSustained;
+
+    this.bossesKilled += 5;
+    this.maxHealth += 5;
+    this.timeSinceBossKill = 0;
+
+    this.health = this.maxHealth;
+    if (shieldReward > 0) { this.armour += shieldReward; }
+  }
+
   public void killedMonster() {
     this.monstersKilled++;
   }

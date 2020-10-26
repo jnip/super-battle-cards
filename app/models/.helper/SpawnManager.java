@@ -34,6 +34,7 @@ public class SpawnManager {
   );
 
   public static Boss getBoss(int turn, int bossesDefeated) {
+    if (Random.nextInt(1,10) <= 2) { return new EnragedBoss(turn, bossesDefeated); }
     return new DefaultBoss(turn, bossesDefeated);
   }
 

@@ -173,8 +173,14 @@ public class GameBoard {
 
   private void registerKill(GameBoardComponent component) {
     if (component instanceof Boss) {
-      this.hero.killedBoss();
-      this.bossesKilled++;
+      if (component instanceof EnragedBoss) {
+        this.hero.killedEnragedBoss();
+        this.bossesKilled += 5;
+      }
+      else {
+        this.hero.killedBoss();
+        this.bossesKilled++;
+      }
     }
     else if (component instanceof Monster) {
       this.hero.killedMonster();
