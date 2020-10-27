@@ -207,11 +207,22 @@ public class GameBoard {
     }
     for (int i = 0; i < this.height; i++) {
       for (int j = 0; j < this.width; j++) {
-        if (!this.board[i][j].preventNextTictok) {
-          this.board[i][j].afterTictok(this, j, i);
+        if (this.board[i][j] instanceof Trap) {
+          if (!this.board[i][j].preventNextTictok) {
+            this.board[i][j].afterTictok(this, j, i);
+          }
+          this.board[i][j].preventNextTictok = false;
         }
-        // Careful not to delete this
-        this.board[i][j].preventNextTictok = false;
+      }
+    }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (!(this.board[i][j] instanceof Trap)) {
+          if (!this.board[i][j].preventNextTictok) {
+            this.board[i][j].afterTictok(this, j, i);
+          }
+          this.board[i][j].preventNextTictok = false;
+        }
       }
     }
     this.bossCounter--;
