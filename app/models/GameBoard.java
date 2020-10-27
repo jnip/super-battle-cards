@@ -10,7 +10,7 @@ public class GameBoard {
   private enum Move {UP, DOWN, RIGHT, LEFT}
 
   public Hero hero;
-  public boolean isDirty = true;
+  public boolean isDirty;
   private int bossCounter;
   private int width = 5;
   private int height = 5; 
@@ -20,12 +20,12 @@ public class GameBoard {
     this.board = board;
     this.turn = turn;
     this.bossesKilled = kills;
-    this.isDirty = false;
     this.height = board.length;
     this.width = board[0].length;
     int[] heroLocation = this.findHero();
     this.hero = (Hero)this.board[heroLocation[1]][heroLocation[0]];
     this.bossCounter = 10-this.hero.timeSinceBossKill;
+    this.isDirty = false;
   }
 
   // New game
@@ -40,6 +40,7 @@ public class GameBoard {
     this.hero = new DefaultHero(turn, bossesKilled);
     this.board[size/2][size/2] = this.hero;
     this.bossCounter = 10;
+    this.isDirty = true;
   }
 
   public String toJSON() {

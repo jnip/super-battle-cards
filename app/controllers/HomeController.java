@@ -13,13 +13,31 @@ import java.util.concurrent.CompletableFuture;
  */
 public class HomeController extends Controller {
     public WebService ws;
+    public Application ac;
 
     @Inject
-    public HomeController(WebService ws) {
+    public HomeController(WebService ws, Application ac) {
       this.ws = ws;
+      this.ac = ac;
     }
 
-    public Result index(Http.Request request, String name, int id) {
+    public Result showMenu() {
+      return ok(views.html.menu.render());
+    }
+
+    public Result newGame(String player) {
+      GameBoard board = new GameBoard();
+      int newGameId = ws.saveNewGame(player, board);
+      return redirect(controllers.routes.HomeController.showGame(player, newGameId));
+    }
+
+    public Result showLatestGame(String player) {
+      int gameId = this.ws.getGameCount(player) - 1;
+      if (gameId < 0) { return redirect(controllers.routes.HomeController.newGame(player)); }
+      return redirect(controllers.routes.HomeController.showGame(player, gameId));
+    }
+
+    public Result showGame(Http.Request request, String name, int id) {
         // Send HTML
         Optional<String> userAgent = request.getHeaders().get("User-Agent");
         Boolean fromKindle = false;
@@ -32,7 +50,7 @@ public class HomeController extends Controller {
           ok(views.html.index.render());
     }
 
-    public Result nextMove(String player, int gameId, String playerMove) {
+    public Result registerAction(String player, int gameId, String playerMove) {
         // Load game from database and Execute move
         CompletionStage<String> promiseOfData = ws.getSave(player, gameId);
         if (promiseOfData == null) {
@@ -41,9 +59,9 @@ public class HomeController extends Controller {
         CompletableFuture<GameBoard> promiseOfGame = (CompletableFuture<GameBoard>) promiseOfData.thenApply(body -> {
           DataInterface dataObj = new DataInterface(body);
           GameBoard board;
-          // If missing or corrupted save: Create new game
+          // If missing or corrupted save
           if (!dataObj.isValid) {
-            board = new GameBoard();
+            board = null;
           }
           // Otherwise: Load data and Execute move
           else {
@@ -52,18 +70,18 @@ public class HomeController extends Controller {
           }
           return board;
         });
-        CompletableFuture<Result> promiseOfResult = promiseOfGame.thenApply(
-          board -> ok(board.toJSON()));
-
+        
         try {
-          // Save game
           GameBoard board = promiseOfGame.get();
+          if (board == null) {
+            return badRequest("No such game.");
+          }
+          // Save game
           if (board.isDirty) {
             ws.pushSave(player, gameId, board);
           }
-
           // Send updated board back
-          return promiseOfResult.get();
+          return ok(board.toJSON());
         }
         catch (Exception e){
           System.out.println(e);

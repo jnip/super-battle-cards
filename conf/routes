@@ -6,14 +6,24 @@
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 
-# Redirects
-GET /       controllers.Application.customRedirect(name ?= "default", gameId: Integer ?= 0)                   
-GET /$id<[0-9]+>  controllers.Application.customRedirect(name ?= "default", id: Integer) 
-GET /:name  controllers.Application.customRedirect(name, gameId: Integer ?= 0)    
-GET /$id<[0-9]+>/:name  controllers.Application.customRedirect(name, id: Integer) 
+# Create new game
+GET /new/:name  controllers.HomeController.newGame(name)
 
 
-# Process request
-GET /:name/$id<[0-9]+>  controllers.HomeController.index(request: Request, name, id: Integer)
+# Continue latest game
+GET /:name  controllers.HomeController.showLatestGame(name)
 
-GET /play/:name/:id  controllers.HomeController.nextMove(name:String, id: Integer, move ?= "none")
+
+# Load specific game
+GET /:name/$gameId<[0-9]+>  controllers.HomeController.showGame(request: Request, name, gameId: Integer)
+GET /$gameId<[0-9]+>/:name  controllers.Application.customRedirect(name, gameId: Integer) 
+
+
+# Register player move
+GET /play/:name/:gameId  controllers.HomeController.registerAction(name:String, gameId: Integer, move ?= "none")
+
+
+# Show game menu
+GET /       controllers.HomeController.showMenu()           
+GET /$gameId<[0-9]+>  controllers.Application.customRedirect(name ?= "", gameId: Integer) 
+GET /*unmatched controllers.Application.customRedirect(unmatched, gameId:Integer = -1)

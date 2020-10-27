@@ -27,7 +27,11 @@ function gameViewModel() {
       self.clickedObj = undefined;
       self.board(data);
       self.isLoadingAction = false;
+    })
+    .fail(function() {
+      window.location = "/";
     });
+    
     if (!self.usingDoubleClick && action && objectClicked) {
       // UI Replace: clicked tile with empty white tile
       objectClicked.name = "";
