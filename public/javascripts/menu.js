@@ -12,4 +12,7 @@ $("#playerForm").submit(function(e) {
   e.preventDefault();
 });
 
-
+$("#gameOptions").submit(function(e){ e.preventDefault(); });
+$("#continue").click(()=>{ window.location = "/continue/" + playerName; });
+$("#new").click(()=>{ window.location = "/new/" + playerName; });
+$("#replay").click(()=>{ window.location = "/replay/" + playerName; });

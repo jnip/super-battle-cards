@@ -11,6 +11,7 @@ GET /new/:name  controllers.HomeController.newGame(name)
 
 
 # Continue latest game
+GET /continue/:name controllers.HomeController.showLatestGame(name)
 GET /:name  controllers.HomeController.showLatestGame(name)
 
 
