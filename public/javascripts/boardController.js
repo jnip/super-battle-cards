@@ -113,7 +113,10 @@ function gameViewModel() {
   }
 
   self.gameOver = function() {
-    alert("Game Over!");
+    var newGame = confirm("Game Over! Start a New Game?");
+    if (newGame) {
+      window.location = "/new/" + self.playerName;
+    }
   }
 
   self.init();
