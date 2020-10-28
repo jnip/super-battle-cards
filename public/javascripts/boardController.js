@@ -27,7 +27,12 @@ function gameViewModel() {
       self.clickedObj = undefined;
       self.board(data);
       self.isLoadingAction = false;
+    })
+    .fail(function() {
+      alert("Failed to load data.\nRedirecting to menu...")
+      window.location = "/";
     });
+    
     if (!self.usingDoubleClick && action && objectClicked) {
       // UI Replace: clicked tile with empty white tile
       objectClicked.name = "";
@@ -109,7 +114,10 @@ function gameViewModel() {
   }
 
   self.gameOver = function() {
-    alert("Game Over!");
+    var newGame = confirm("Game Over!\nStart a New Game?");
+    if (newGame) {
+      window.location = "/new/" + self.playerName;
+    }
   }
 
   self.init();
