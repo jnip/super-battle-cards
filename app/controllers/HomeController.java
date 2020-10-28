@@ -37,8 +37,57 @@ public class HomeController extends Controller {
       return redirect(controllers.routes.HomeController.showGame(player, gameId));
     }
 
+    public Result showReplay(Http.Request request, String name, int id) {
+      Optional<String> userAgent = request.getHeaders().get("User-Agent");
+      Boolean fromKindle = false;
+      if (userAgent.isPresent()) {
+        fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
+      }
+
+      return (fromKindle)? 
+        ok(views.html.replayKindle.render()):
+        ok(views.html.replay.render());
+    }
+
+    public Result getGameCount(String name) {
+      return ok(""+ws.getGameCount(name));
+    }
+
+    public Result getMoveCount(String name, int gameId) {
+      try {
+        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId));
+        return (board == null)?badRequest("No such game."):ok(""+board.turn);
+      }
+      catch (Exception e) {
+        System.out.print("getMoveCount: ");
+        System.out.println(e);
+        return badRequest(e.toString());
+      }
+    }
+
+    public Result getBoard(String name, int gameId, int moveNum) {
+      try {
+        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId, moveNum));
+        return (board == null)?badRequest("No such game."):ok(board.toJSON());
+      }
+      catch (Exception e) {
+        System.out.print("getBoard: ");
+        System.out.println(e);
+        return badRequest(e.toString());
+      }
+    }
+
+    private GameBoard getBoardFromFuture(CompletableFuture<String> future) throws Exception {
+      String data = future.get();
+      DataInterface dataObj = new DataInterface(data);
+      GameBoard board = null;
+      if (dataObj.isValid) {
+        board = new GameBoard(dataObj.getBoard(), dataObj.getIndex(), dataObj.getKills());
+      }
+      return board;
+    }
+
     public Result showGame(Http.Request request, String name, int id) {
-        // Send HTML
         Optional<String> userAgent = request.getHeaders().get("User-Agent");
         Boolean fromKindle = false;
         if (userAgent.isPresent()) {
@@ -52,11 +101,11 @@ public class HomeController extends Controller {
 
     public Result registerAction(String player, int gameId, String playerMove) {
         // Load game from database and Execute move
-        CompletionStage<String> promiseOfData = ws.getSave(player, gameId);
+        CompletableFuture<String> promiseOfData = ws.getSave(player, gameId);
         if (promiseOfData == null) {
           return badRequest("Database not set up.");
         }
-        CompletableFuture<GameBoard> promiseOfGame = (CompletableFuture<GameBoard>) promiseOfData.thenApply(body -> {
+        CompletableFuture<GameBoard> promiseOfGame = promiseOfData.thenApply(body -> {
           DataInterface dataObj = new DataInterface(body);
           GameBoard board;
           // If missing or corrupted save

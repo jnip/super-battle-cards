@@ -8,4 +8,8 @@ public class Application extends Controller {
     }
     return redirect(controllers.routes.HomeController.showGame(name, gameId));
   }
+
+  public Result replayRedirect(String name, int gameId) {
+    return redirect(controllers.routes.HomeController.showReplay(name, gameId));
+  }
 }

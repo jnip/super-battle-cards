@@ -38,12 +38,25 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
     }
   }
 
-  public CompletionStage<String> getSave(String player, int gameId) {
+  public CompletableFuture<String> getSave(String player, int gameId) {
+    return this.getSave(player, gameId, -1);
+  }
+
+  public CompletableFuture<String> getSave(String player, int gameId, int moveNumber) {
     if (this.databaseURL.equals("")) { return null; }
-    String url = this.databaseURL + "/users/"
-      + player +"/save/"+ gameId + ".json?orderBy=\"$key\"&limitToLast=1";
-    WSRequest request = this.ws.url(url);
-    return request.get().thenApply(r -> r.getBody());
+
+    String urlStart = this.databaseURL + "/users/"
+      + player +"/save/"+ gameId + ".json?orderBy=\"$key\"";
+    String urlEnd = "&limitToLast=1";
+    if (moveNumber >= 0) {
+      String move = ""+moveNumber;
+      while (move.length() < 10) {
+        move = "0"+move;
+      }
+      urlEnd = "&startAt=\"move_"+move+"_\"&limitToFirst=1";
+    }
+    WSRequest request = this.ws.url(urlStart+urlEnd);
+    return (CompletableFuture<String>)(request.get().thenApply(r -> r.getBody()));
   }
 
   public void pushSave(String player, int gameId, GameBoard board) {

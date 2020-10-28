@@ -15,7 +15,7 @@ GET /continue/:name controllers.HomeController.showLatestGame(name)
 GET /:name  controllers.HomeController.showLatestGame(name)
 
 
-# Load specific game
+# Load data of specific game
 GET /:name/$gameId<[0-9]+>  controllers.HomeController.showGame(request: Request, name, gameId: Integer)
 GET /$gameId<[0-9]+>/:name  controllers.Application.customRedirect(name, gameId: Integer) 
 
@@ -23,6 +23,14 @@ GET /$gameId<[0-9]+>/:name  controllers.Application.customRedirect(name, gameId:
 # Register player move
 GET /play/:name/:gameId  controllers.HomeController.registerAction(name:String, gameId: Integer, move ?= "none")
 
+# View replay of game
+GET /replay/:name/$gameId<[0-9]+> controllers.HomeController.showReplay(request: Request, name, gameId: Integer)
+GET /replay/$gameId<[0-9]+>/:name  controllers.Application.replayRedirect(name, gameId: Integer)
+
+# Load data for replay
+GET /replayData/:name  controllers.HomeController.getGameCount(name)
+GET /replayData/:name/$gameId<[0-9]+>  controllers.HomeController.getMoveCount(name, gameId:Integer)
+GET /replayData/:name/$gameId<[0-9]+>/$moveNum<[0-9]+>  controllers.HomeController.getBoard(name, gameId:Integer, moveNum: Integer)
 
 # Show game menu
 GET /       controllers.HomeController.showMenu()           

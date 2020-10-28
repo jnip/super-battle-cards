@@ -29,6 +29,7 @@ function gameViewModel() {
       self.isLoadingAction = false;
     })
     .fail(function() {
+      alert("Failed to load data.\nRedirecting to menu...")
       window.location = "/";
     });
     

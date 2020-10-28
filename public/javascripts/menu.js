@@ -13,6 +13,31 @@ $("#playerForm").submit(function(e) {
 });
 
 $("#gameOptions").submit(function(e){ e.preventDefault(); });
-$("#continue").click(()=>{ window.location = "/continue/" + playerName; });
-$("#new").click(()=>{ window.location = "/new/" + playerName; });
-$("#replay").click(()=>{ window.location = "/replay/" + playerName; });
+$("#continue").click(function(){ window.location = "/continue/" + playerName; });
+$("#new").click(function(){ window.location = "/new/" + playerName; });
+
+$("#replay").click(function() {
+  $.getJSON("/replayData/"+self.playerName, function(gameCount) {
+      if (gameCount < 1) {
+        alert("Sorry, no games found.");
+        return;
+      }
+      else {
+        var gameId = -1;
+        if (gameCount > 1) {
+          var choosenId;
+          do {
+            var input = prompt("Which game would you like to replay?\n"+
+              "Pick a number between 0-"+(gameCount-1));
+            if (input == null) {
+              return;
+            }
+            choosenId = parseInt(input);
+          }
+          while (isNaN(choosenId) || choosenId < 0 || choosenId > gameCount-1);
+          gameId = choosenId;
+        }
+        window.location = "/replay/" + self.playerName + "/" + gameId;
+      }
+    });
+});
