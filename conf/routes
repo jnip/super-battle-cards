@@ -33,6 +33,6 @@ GET /replayData/:name/$gameId<[0-9]+>  controllers.HomeController.getMoveCount(n
 GET /replayData/:name/$gameId<[0-9]+>/$moveNum<[0-9]+>  controllers.HomeController.getBoard(name, gameId:Integer, moveNum: Integer)
 
 # Show game menu
-GET /       controllers.HomeController.showMenu()           
+GET /       controllers.HomeController.showMenu(request: Request)           
 GET /$gameId<[0-9]+>  controllers.Application.customRedirect(name ?= "", gameId: Integer) 
 GET /*unmatched controllers.Application.customRedirect(unmatched, gameId:Integer = -1)

@@ -1,11 +1,19 @@
 var playerName;
 
+$(document).ready(function() {
+  var $input = $("#playerForm > input");
+  $input.focus(); 
+  playerName = $input.serializeArray()[0].value.trim();
+  $("button[type='submit']")[0].disabled = (playerName == "");
+});
+
 $("#playerForm > input").keyup(function(e) {
   playerName = $(this).serializeArray()[0].value.trim();
   $(this).siblings("button[type='submit']")[0].disabled = (playerName == "");
 });
 
 $("#playerForm").submit(function(e) {
+  $("input").blur(); // hide keyboard
   $(this).hide();
   $("#gameOptions > #name").text(playerName);
   $("#gameOptions").show();

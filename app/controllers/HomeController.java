@@ -21,8 +21,10 @@ public class HomeController extends Controller {
       this.ac = ac;
     }
 
-    public Result showMenu() {
-      return ok(views.html.menu.render());
+    public Result showMenu(Http.Request request) {
+      String css = "/assets/stylesheets/";
+      css += (this.isKindleRequest(request))?"menuKindle.css":"menu.css";
+      return ok(views.html.menu.render(css));
     }
 
     public Result newGame(String player) {
@@ -38,13 +40,7 @@ public class HomeController extends Controller {
     }
 
     public Result showReplay(Http.Request request, String name, int id) {
-      Optional<String> userAgent = request.getHeaders().get("User-Agent");
-      Boolean fromKindle = false;
-      if (userAgent.isPresent()) {
-        fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
-      }
-
-      return (fromKindle)? 
+      return (this.isKindleRequest(request))? 
         ok(views.html.replayKindle.render()):
         ok(views.html.replay.render());
     }
@@ -88,15 +84,9 @@ public class HomeController extends Controller {
     }
 
     public Result showGame(Http.Request request, String name, int id) {
-        Optional<String> userAgent = request.getHeaders().get("User-Agent");
-        Boolean fromKindle = false;
-        if (userAgent.isPresent()) {
-          fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
-        }
-        
-        return (fromKindle)? 
-          ok(views.html.kindle.render()):
-          ok(views.html.index.render());
+      return (this.isKindleRequest(request))? 
+        ok(views.html.kindle.render()):
+        ok(views.html.index.render());
     }
 
     public Result registerAction(String player, int gameId, String playerMove) {
@@ -136,5 +126,13 @@ public class HomeController extends Controller {
           System.out.println(e);
           return ok(e.toString());
         }
+    }
+    private boolean isKindleRequest(Http.Request request) {
+      Optional<String> userAgent = request.getHeaders().get("User-Agent");
+      Boolean fromKindle = false;
+      if (userAgent.isPresent()) {
+        fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
+      }
+      return fromKindle;
     }
 }

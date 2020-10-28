@@ -1,0 +1,20 @@
+form {
+  width: 40ex;
+  background-color: lightgrey;
+  border-radius: 5px;
+  margin: auto;
+  padding-bottom: 2ex;
+}
+
+form > * {
+  display: block;
+  margin: auto;
+  text-align: center;
+  line-height: 5ex;
+  height: 5ex;
+}
+
+form > button {
+  margin-top: 2ex;
+  margin-bottom: 2ex;
+}
