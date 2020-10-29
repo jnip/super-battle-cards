@@ -6,6 +6,7 @@
  - SBC_Careful
  - SBC_DefaultBoss
  - SBC_DefaultHero
+ - SBC_EnragedBoss
  - SBC_Fireball
  - SBC_Flamethrower0
  - SBC_Flamethrower1
