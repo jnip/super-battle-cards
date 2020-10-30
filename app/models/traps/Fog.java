@@ -23,6 +23,9 @@ public class Fog extends Trap {
   }
 
   public void interactWithHero(Hero hero, GameBoard game) {
-    // Do Later...
+    if (this.value >= hero.fogCounter) {
+      // interaction happens before incrementing time, so value + 1
+      hero.fogCounter = this.value + 1;
+    }
   }
 }

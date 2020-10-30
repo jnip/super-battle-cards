@@ -8,6 +8,7 @@ public class Hero extends GameBoardComponent {
   public int bossesKilled = 0;
   public int monstersKilled = 0;
   public int timeSinceBossKill = 0;
+  public int fogCounter = 0;
   private boolean invulnerable = false;
 
   public Hero(String name, int startingHP) {
@@ -87,5 +88,8 @@ public class Hero extends GameBoardComponent {
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.stepsWalked++;
     this.timeSinceBossKill++;
+    if (this.fogCounter > 0) {
+      this.fogCounter--;
+    }
   }
 }

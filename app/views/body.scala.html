@@ -13,24 +13,24 @@
 
         <!-- Add health / item-value  -->
         <!-- ...optional highlighting -->
-        <div data-bind="if: !$data.maxHealth && $root.showImageValue($data)" class="hexagon-overlay">
+        <div data-bind="if: !$root.isHero($data) && $root.showValue($data)" class="hexagon-overlay">
           <div class="diamond-shape">
             <div class="component-value" data-bind="text: $data.health || $data.value, css: { glow: !!$data.health && !!$data.state }">?</div>
           </div>
         </div>
 
         <!-- For Heroes, add health  -->
-        <div data-bind="if: $data.maxHealth" class="hexagon-overlay heroHP">
+        <div data-bind="if: $root.isHero($data)" class="hexagon-overlay heroHP">
           <div class="diamond-shape heroHP">
             <div class="component-value heroHP" data-bind="text: health+' / '+maxHealth">?</div>
           </div>
         </div>
 
         <!-- Add counter -->
-        <div class="counter-overlay" data-bind="visible: $data.counter, text: $data.counter">?</div>
+        <div class="counter-overlay" data-bind="visible: $root.showCounter($data), text: $data.counter">?</div>
 
         <!-- Add armour -->
-        <div class="counter-overlay" data-bind="visible: $data.armour, text: $data.armour">?</div>
+        <div class="counter-overlay" data-bind="visible: $root.showArmour($data), text: $data.armour">?</div>
       </span>
     </span>
   </div>
