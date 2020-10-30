@@ -6,6 +6,9 @@
   width: 200px;
   height: 245px;
 }
+.inner-container > span.wrap.poison > img {
+  border-radius: 30%;
+}
 .glow {
   background: white;
   color: black;
@@ -24,6 +27,22 @@
   font-size: 40px;
   font-weight: bold;
   text-align: center;
+}
+
+/* Overlay: bottom left corner */
+.poison-overlay {
+  position: absolute;
+  top: -20px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  background: #DDD;
+  color: black;
+  line-height: 40px;
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 100%;
 }
 
 /* Overlay: top of container, centered horizontally */

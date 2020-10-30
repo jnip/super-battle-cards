@@ -7,7 +7,7 @@
 @main("Super Battle Cards") {
   <div id="board-container" data-bind="foreach: board">
     <span class="inner-container" data-bind="foreach: $data">
-      <span class="wrap">
+      <span class="wrap" data-bind="css: { poison: $data.poisonCount > 0 }">
         <!-- Image for board component -->
         <img data-bind='attr: {src: $root.getImageLink($data)}, click:function(data) { $root.clicked(data, $index, $parentContext.$index)}' onerror="this.onerror=null; this.src='/assets/images/empty.png'">
 
@@ -31,6 +31,9 @@
 
         <!-- Add armour -->
         <div class="counter-overlay" data-bind="visible: $root.showArmour($data), text: $data.armour">?</div>
+
+        <!-- Add poison -->
+        <div class="poison-overlay" data-bind="visible: $data.poisonCount > 0, text: $data.poisonCount">?</div>
       </span>
     </span>
   </div>
