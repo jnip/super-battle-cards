@@ -12,6 +12,7 @@ function gameViewModel() {
   self.stepsWalked;
   self.bossesKilled;
   self.monstersKilled;
+  self.money;
 
   self.init = function() {
     // Get playerName nad gameId from the url
@@ -59,6 +60,7 @@ function gameViewModel() {
     self.stepsWalked = hero.stepsWalked;
     self.bossesKilled = hero.bossesKilled;
     self.monstersKilled = hero.monstersKilled;
+    self.money = hero.money;
   }
 
   self.showStats = function() {
@@ -69,6 +71,7 @@ function gameViewModel() {
       stats += "\n\n";
     }
     stats += "Steps Taken: " + self.stepsWalked;
+    stats += "\nGold Collected: " + self.money;
     stats += "\nMonsters Killed: " + self.monstersKilled;
     stats += "\nBosses Killed: " + self.bossesKilled;
     alert(stats);

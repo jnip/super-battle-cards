@@ -4,6 +4,7 @@ public class Hero extends GameBoardComponent {
   public int maxHealth;
   public int health;
   public int armour = 0;
+  public int money = 0;
   public int stepsWalked = 0;
   public int bossesKilled = 0;
   public int monstersKilled = 0;

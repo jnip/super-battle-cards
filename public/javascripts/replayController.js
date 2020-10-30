@@ -14,6 +14,7 @@ function gameViewModel() {
   self.stepsWalked;
   self.bossesKilled;
   self.monstersKilled;
+  self.money;
 
   self.init = function() {
     var pathValues = window.location.pathname.split("/");
@@ -76,6 +77,7 @@ function gameViewModel() {
     self.stepsWalked = hero.stepsWalked;
     self.bossesKilled = hero.bossesKilled;
     self.monstersKilled = hero.monstersKilled;
+    self.money = hero.money;
   }
 
   self.clicked = function(objectClicked, x, y) {
@@ -101,6 +103,7 @@ function gameViewModel() {
       stats += "\n\n";
     }
     stats += "Steps Taken: " + self.stepsWalked;
+    stats += "\nGold Collected: " + self.money;
     stats += "\nMonsters Killed: " + self.monstersKilled;
     stats += "\nBosses Killed: " + self.bossesKilled;
     alert(stats);
