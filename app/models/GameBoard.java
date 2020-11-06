@@ -10,7 +10,7 @@ public class GameBoard {
   private enum Move {UP, DOWN, RIGHT, LEFT}
 
   public Hero hero;
-  public boolean isDirty = true;
+  public boolean isDirty;
   private int bossCounter;
   private int width = 5;
   private int height = 5; 
@@ -20,12 +20,12 @@ public class GameBoard {
     this.board = board;
     this.turn = turn;
     this.bossesKilled = kills;
-    this.isDirty = false;
     this.height = board.length;
     this.width = board[0].length;
     int[] heroLocation = this.findHero();
     this.hero = (Hero)this.board[heroLocation[1]][heroLocation[0]];
     this.bossCounter = 10-this.hero.timeSinceBossKill;
+    this.isDirty = false;
   }
 
   // New game
@@ -40,6 +40,7 @@ public class GameBoard {
     this.hero = new DefaultHero(turn, bossesKilled);
     this.board[size/2][size/2] = this.hero;
     this.bossCounter = 10;
+    this.isDirty = true;
   }
 
   public String toJSON() {
@@ -76,6 +77,9 @@ public class GameBoard {
     if (empty != null) {
       if (bossCounter <= 1 && this.findBoss() == null && !(removedComponent instanceof Boss)) {
         this.board[empty[1]][empty[0]] = SpawnManager.getBoss(turn, bossesKilled);
+      }
+      else if (removedComponent instanceof EnragedBoss) {
+        this.board[empty[1]][empty[0]] = SpawnManager.getReward(turn, bossesKilled, removedComponent);
       }
       else {
         this.board[empty[1]][empty[0]] = SpawnManager.getNext(turn, bossesKilled);
@@ -140,7 +144,7 @@ public class GameBoard {
       for (int y = 0; y < this.height; y++) {
         if (this.board[y][x].isDestroyed) {
           this.registerKill(this.board[y][x]);
-          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled);
+          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled, this.board[y][x]);
         }
       }
     }
@@ -161,12 +165,7 @@ public class GameBoard {
       for (int y = 0; y < this.height; y++) {
         if (this.board[y][x].isDestroyed) {
           this.registerKill(this.board[y][x]);
-          if (this.board[y][x] instanceof Monster) {
-            this.board[y][x] = SpawnManager.getReward(turn, bossesKilled);
-          }
-          else {
-            this.board[y][x] = SpawnManager.getOpenPath();
-          }
+          this.board[y][x] = SpawnManager.getReward(turn, bossesKilled, this.board[y][x]);
         }
       }
     }
@@ -178,8 +177,14 @@ public class GameBoard {
 
   private void registerKill(GameBoardComponent component) {
     if (component instanceof Boss) {
-      this.hero.killedBoss();
-      this.bossesKilled++;
+      if (component instanceof EnragedBoss) {
+        this.hero.killedEnragedBoss();
+        this.bossesKilled += 5;
+      }
+      else {
+        this.hero.killedBoss();
+        this.bossesKilled++;
+      }
     }
     else if (component instanceof Monster) {
       this.hero.killedMonster();
@@ -187,17 +192,41 @@ public class GameBoard {
   }
 
   private void tictok() {
-    this.bossCounter--;
     for (int i = 0; i < this.height; i++) {
       for (int j = 0; j < this.width; j++) {
-        if (this.board[i][j].preventNextTictok) {
-          this.board[i][j].preventNextTictok = false;
+        if (!this.board[i][j].preventNextTictok) {
+          this.board[i][j].beforeTictok(this, j, i);
         }
-        else {
+      }
+    }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (!this.board[i][j].preventNextTictok) {
           this.board[i][j].tictok(this, j, i);
         }
       }
     }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (this.board[i][j] instanceof Trap) {
+          if (!this.board[i][j].preventNextTictok) {
+            this.board[i][j].afterTictok(this, j, i);
+          }
+          this.board[i][j].preventNextTictok = false;
+        }
+      }
+    }
+    for (int i = 0; i < this.height; i++) {
+      for (int j = 0; j < this.width; j++) {
+        if (!(this.board[i][j] instanceof Trap)) {
+          if (!this.board[i][j].preventNextTictok) {
+            this.board[i][j].afterTictok(this, j, i);
+          }
+          this.board[i][j].preventNextTictok = false;
+        }
+      }
+    }
+    this.bossCounter--;
     this.turn++;
   }
 

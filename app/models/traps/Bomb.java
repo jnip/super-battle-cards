@@ -2,6 +2,7 @@ package components;
 
 public class Bomb extends Trap {
   public int counter;
+  private boolean pendingActivation = false;
 
   public Bomb(int turnNum, int bossesDefeated) {
     super("Bomb", (10+bossesDefeated)/2);
@@ -17,6 +18,12 @@ public class Bomb extends Trap {
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.counter--;
     if (this.counter == 0) {
+      this.pendingActivation = true;
+    }
+  }
+
+  public void afterTictok(GameBoard game, int thisX, int thisY) {
+    if (pendingActivation) {
       // Get components to do damage to
       GameBoardComponent[] toDamage = this.getComponents(game, thisX, thisY);
       // Do damage

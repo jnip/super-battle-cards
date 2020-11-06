@@ -1,11 +1,14 @@
 ## png files to be added here
  - favicon2
+ 
+###### Ideal Resolution: 244 x 352
  - SBC_Arrow
  - SBC_Barrel
  - SBC_Bomb
  - SBC_Careful
  - SBC_DefaultBoss
  - SBC_DefaultHero
+ - SBC_EnragedBoss
  - SBC_Fireball
  - SBC_Flamethrower0
  - SBC_Flamethrower1

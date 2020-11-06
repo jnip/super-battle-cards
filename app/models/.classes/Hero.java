@@ -4,10 +4,12 @@ public class Hero extends GameBoardComponent {
   public int maxHealth;
   public int health;
   public int armour = 0;
+  public int money = 0;
   public int stepsWalked = 0;
   public int bossesKilled = 0;
   public int monstersKilled = 0;
   public int timeSinceBossKill = 0;
+  public int fogCounter = 0;
   private boolean invulnerable = false;
 
   public Hero(String name, int startingHP) {
@@ -20,6 +22,19 @@ public class Hero extends GameBoardComponent {
     this.bossesKilled++;
     this.maxHealth++;
     this.timeSinceBossKill = 0;
+  }
+
+  public void killedEnragedBoss() {
+    int recovery = this.maxHealth/2;
+    int damageSustained = this.maxHealth - this.health;
+    int shieldReward = recovery - damageSustained;
+
+    this.bossesKilled += 5;
+    this.maxHealth += 5;
+    this.timeSinceBossKill = 0;
+
+    this.health = this.maxHealth;
+    if (shieldReward > 0) { this.armour += shieldReward; }
   }
 
   public void killedMonster() {
@@ -74,5 +89,8 @@ public class Hero extends GameBoardComponent {
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.stepsWalked++;
     this.timeSinceBossKill++;
+    if (this.fogCounter > 0) {
+      this.fogCounter--;
+    }
   }
 }

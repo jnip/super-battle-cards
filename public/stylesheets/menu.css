@@ -1,0 +1,35 @@
+html {
+  height: 90%;
+}
+body {
+  height: 100%;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+form {
+  width: 75%;
+  background-color: lightgrey;
+  border-radius: 2vh;
+  padding-bottom: 5vh;
+}
+
+form > * {
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-size: 9vw;
+  width: 75%;
+  max-height: 20vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+#gameOptions button {
+  font-size: 4.3vw;
+}
+

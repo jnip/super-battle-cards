@@ -4,6 +4,7 @@ public class Flamethrower extends Trap {
   public int state; // orientation: 0 = horizontal
   public int counter;
   protected int maxCounter;
+  protected boolean pendingActivation = false;
 
   public Flamethrower(int turnNum, int bossesDefeated) {
     super("Flamethrower", (10+bossesDefeated)/2);
@@ -24,9 +25,14 @@ public class Flamethrower extends Trap {
     this.state = (this.state == 0)?1:0;
     if (this.counter == 0) {
       this.counter = this.maxCounter;
-      // Get components to do damage to
+      this.pendingActivation = true;      
+    }
+  }
+
+  public void afterTictok(GameBoard game, int thisX, int thisY) {
+    if (this.pendingActivation) {
+      this.pendingActivation = false;
       GameBoardComponent[] targets = this.findTargets(game, thisX, thisY);
-      // Do Damage
       for (int i = 0; i < targets.length; i++) {
         targets[i].takeDamage(this.value);
       }

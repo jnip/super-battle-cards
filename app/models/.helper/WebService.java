@@ -5,6 +5,7 @@ import play.mvc.*;
 import play.libs.ws.*;
 import play.Environment;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletableFuture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,16 +38,29 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
     }
   }
 
-  public CompletionStage<String> getSave(String player, int gameId) {
-    if (this.databaseURL == "") { return null; }
-    String url = this.databaseURL + "/users/"
-      + player +"/save/"+ gameId + ".json?orderBy=\"$key\"&limitToLast=1";
-    WSRequest request = this.ws.url(url);
-    return request.get().thenApply(r -> r.getBody());
+  public CompletableFuture<String> getSave(String player, int gameId) {
+    return this.getSave(player, gameId, -1);
   }
 
-  public void pushSave(String player, int gameId, GameBoard board) {
-    if (this.databaseURL == "") { return; }
+  public CompletableFuture<String> getSave(String player, int gameId, int moveNumber) {
+    if (this.databaseURL.equals("")) { return null; }
+
+    String urlStart = this.databaseURL + "/users/"
+      + player +"/save/"+ gameId + ".json?orderBy=\"$key\"";
+    String urlEnd = "&limitToLast=1";
+    if (moveNumber >= 0) {
+      String move = ""+moveNumber;
+      while (move.length() < 10) {
+        move = "0"+move;
+      }
+      urlEnd = "&startAt=\"move_"+move+"_\"&limitToFirst=1";
+    }
+    WSRequest request = this.ws.url(urlStart+urlEnd);
+    return (CompletableFuture<String>)(request.get().thenApply(r -> r.getBody()));
+  }
+
+  public void pushSave(String player, int gameId, GameBoard board, boolean waitForCompletion) {
+    if (this.databaseURL.equals("")) { return; }
     int index = board.turn;
     int kills = board.bossesKilled;
     String formattedIndex = "" + index;
@@ -57,6 +71,44 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
       + player +"/save/"+ gameId +"/move_"+ formattedIndex +"_"+kills+".json";
     String data = board.toJSON(true);
     WSRequest request = this.ws.url(url);
-    request.put(data);
+    CompletionStage<WSResponse> promise = request.put(data);
+
+    if (waitForCompletion) {
+      try {
+        WSResponse response = ((CompletableFuture<WSResponse>)promise).get();
+      }
+      catch (Exception e) {};
+    }
+  }
+
+  public int getGameCount(String player) {
+    if (this.databaseURL.equals("")) { return -1; }
+    String url = this.databaseURL + "/users/" + player + "/gameCount.json";
+    WSRequest request = this.ws.url(url);
+    CompletionStage<String> responseBody = request.get().thenApply(r -> r.getBody());
+    try {
+      String value = ((CompletableFuture<String>)responseBody).get();
+      if (value.equals("null")) { return 0; }
+      return Integer.parseInt(value);
+    }
+    catch (Exception e) {
+      return -1;
+    }
+  }
+
+  private int incrementGameCount(String player) {
+    if (this.databaseURL.equals("")) { return -1; }
+    String url = this.databaseURL + "/users/" + player + "/gameCount.json";
+    int gameCount = this.getGameCount(player);
+    int newGameCount = (gameCount < 0)?1:gameCount+1;
+    this.ws.url(url).put(""+newGameCount);
+    return newGameCount;
+  }
+
+  public int saveNewGame(String player, GameBoard game) {
+    int numGames = incrementGameCount(player);
+    int gameId = numGames - 1;
+    this.pushSave(player, gameId, game, true);
+    return gameId;
   }
 }

@@ -13,37 +13,94 @@ import java.util.concurrent.CompletableFuture;
  */
 public class HomeController extends Controller {
     public WebService ws;
+    public Application ac;
 
     @Inject
-    public HomeController(WebService ws) {
+    public HomeController(WebService ws, Application ac) {
       this.ws = ws;
+      this.ac = ac;
     }
 
-    public Result index(Http.Request request, String name, int id) {
-        // Send HTML
-        Optional<String> userAgent = request.getHeaders().get("User-Agent");
-        Boolean fromKindle = false;
-        if (userAgent.isPresent()) {
-          fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
-        }
-        
-        return (fromKindle)? 
-          ok(views.html.kindle.render()):
-          ok(views.html.index.render());
+    public Result showMenu(Http.Request request) {
+      String css = "/assets/stylesheets/";
+      css += (this.isKindleRequest(request))?"menuKindle.css":"menu.css";
+      return ok(views.html.menu.render(css));
     }
 
-    public Result nextMove(String player, int gameId, String playerMove) {
+    public Result newGame(String player) {
+      GameBoard board = new GameBoard();
+      int newGameId = ws.saveNewGame(player, board);
+      return redirect(controllers.routes.HomeController.showGame(player, newGameId));
+    }
+
+    public Result showLatestGame(String player) {
+      int gameId = this.ws.getGameCount(player) - 1;
+      if (gameId < 0) { return redirect(controllers.routes.HomeController.newGame(player)); }
+      return redirect(controllers.routes.HomeController.showGame(player, gameId));
+    }
+
+    public Result showReplay(Http.Request request, String name, int id) {
+      return (this.isKindleRequest(request))? 
+        ok(views.html.replayKindle.render()):
+        ok(views.html.replay.render());
+    }
+
+    public Result getGameCount(String name) {
+      return ok(""+ws.getGameCount(name));
+    }
+
+    public Result getMoveCount(String name, int gameId) {
+      try {
+        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId));
+        return (board == null)?badRequest("No such game."):ok(""+board.turn);
+      }
+      catch (Exception e) {
+        System.out.print("getMoveCount: ");
+        System.out.println(e);
+        return badRequest(e.toString());
+      }
+    }
+
+    public Result getBoard(String name, int gameId, int moveNum) {
+      try {
+        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId, moveNum));
+        return (board == null)?badRequest("No such game."):ok(board.toJSON());
+      }
+      catch (Exception e) {
+        System.out.print("getBoard: ");
+        System.out.println(e);
+        return badRequest(e.toString());
+      }
+    }
+
+    private GameBoard getBoardFromFuture(CompletableFuture<String> future) throws Exception {
+      String data = future.get();
+      DataInterface dataObj = new DataInterface(data);
+      GameBoard board = null;
+      if (dataObj.isValid) {
+        board = new GameBoard(dataObj.getBoard(), dataObj.getIndex(), dataObj.getKills());
+      }
+      return board;
+    }
+
+    public Result showGame(Http.Request request, String name, int id) {
+      return (this.isKindleRequest(request))? 
+        ok(views.html.kindle.render()):
+        ok(views.html.index.render());
+    }
+
+    public Result registerAction(String player, int gameId, String playerMove) {
         // Load game from database and Execute move
-        CompletionStage<String> promiseOfData = ws.getSave(player, gameId);
+        CompletableFuture<String> promiseOfData = ws.getSave(player, gameId);
         if (promiseOfData == null) {
           return badRequest("Database not set up.");
         }
-        CompletableFuture<GameBoard> promiseOfGame = (CompletableFuture<GameBoard>) promiseOfData.thenApply(body -> {
+        CompletableFuture<GameBoard> promiseOfGame = promiseOfData.thenApply(body -> {
           DataInterface dataObj = new DataInterface(body);
           GameBoard board;
-          // If missing or corrupted save: Create new game
+          // If missing or corrupted save
           if (!dataObj.isValid) {
-            board = new GameBoard();
+            board = null;
           }
           // Otherwise: Load data and Execute move
           else {
@@ -52,22 +109,30 @@ public class HomeController extends Controller {
           }
           return board;
         });
-        CompletableFuture<Result> promiseOfResult = promiseOfGame.thenApply(
-          board -> ok(board.toJSON()));
-
+        
         try {
-          // Save game
           GameBoard board = promiseOfGame.get();
-          if (board.isDirty) {
-            ws.pushSave(player, gameId, board);
+          if (board == null) {
+            return badRequest("No such game.");
           }
-
+          // Save game
+          if (board.isDirty) {
+            ws.pushSave(player, gameId, board, false);
+          }
           // Send updated board back
-          return promiseOfResult.get();
+          return ok(board.toJSON());
         }
         catch (Exception e){
           System.out.println(e);
           return ok(e.toString());
         }
+    }
+    private boolean isKindleRequest(Http.Request request) {
+      Optional<String> userAgent = request.getHeaders().get("User-Agent");
+      Boolean fromKindle = false;
+      if (userAgent.isPresent()) {
+        fromKindle = userAgent.get().contains("X11; U; Linux armv7l like Android;");
+      }
+      return fromKindle;
     }
 }

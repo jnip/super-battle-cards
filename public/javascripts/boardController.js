@@ -1,9 +1,18 @@
 // 5 x 5 board
 function gameViewModel() {
   var self = this;
+  // updateBoard
   self.board = ko.observableArray();
+  // init
   self.playerName;
   self.gameId;
+  // stats
+  self.isFogged = ko.observable();
+  self.bossSpawnCounter;
+  self.stepsWalked;
+  self.bossesKilled;
+  self.monstersKilled;
+  self.money;
 
   self.init = function() {
     // Get playerName nad gameId from the url
@@ -26,8 +35,14 @@ function gameViewModel() {
     $.getJSON(ajaxPath, function(data) {
       self.clickedObj = undefined;
       self.board(data);
+      self.updateStats();
       self.isLoadingAction = false;
+    })
+    .fail(function() {
+      alert("Failed to load data.\nRedirecting to menu...");
+      window.location = "/";
     });
+    
     if (!self.usingDoubleClick && action && objectClicked) {
       // UI Replace: clicked tile with empty white tile
       objectClicked.name = "";
@@ -38,8 +53,36 @@ function gameViewModel() {
     }
   }
 
+  self.updateStats = function() {
+    var hero = self.findHero();
+    self.isFogged(hero.fogCounter > 0);
+    self.bossSpawnCounter = 10-hero.timeSinceBossKill;
+    self.stepsWalked = hero.stepsWalked;
+    self.bossesKilled = hero.bossesKilled;
+    self.monstersKilled = hero.monstersKilled;
+    self.money = hero.money;
+  }
+
+  self.showStats = function() {
+    var stats = "";
+    if (self.bossSpawnCounter > 0) {
+      stats += "Boss will spawn in: " + self.bossSpawnCounter + " turn";
+      stats += (self.bossSpawnCounter == 1)?"":"s";
+      stats += "\n\n";
+    }
+    stats += "Steps Taken: " + self.stepsWalked;
+    stats += "\nGold Collected: " + self.money;
+    stats += "\nMonsters Killed: " + self.monstersKilled;
+    stats += "\nBosses Killed: " + self.bossesKilled;
+    alert(stats);
+  }
+
   // Map click to player move action
   self.clicked = function(objectClicked, x, y) {
+    if (objectClicked.type === "HERO") {
+      self.showStats();
+      return;
+    }
     var action = self.isHeroNearby(x(), y());
     if (action) {
       self.updateBoard(action, objectClicked);
@@ -74,6 +117,9 @@ function gameViewModel() {
 
   self.getImageLink = function(object) {
     if (object && object.name) {
+      if (self.isFogged() && object.type !== "HERO") {
+        return "/assets/images/empty1.png";
+      }
       var name;
       if (object.type == "ITEM" || object.type == "SKILL") {
         name=(object.state==1)?"barrel":object.name;
@@ -86,7 +132,12 @@ function gameViewModel() {
     return "/assets/images/empty.png";
   }
 
-  self.showImageValue = function(object) {
+  self.isHero = function(object) {
+    return object.type === "HERO";
+  }
+
+  self.showValue = function(object) {
+    if (self.isFogged()) return false;
     if (object.health) return true;
     if (object.value && object.value != 0) {
       if (object.name == "Spike") return !!object.state;
@@ -96,6 +147,26 @@ function gameViewModel() {
     else {
       return false;
     }
+  }
+
+  self.showCounter = function(object) {
+    if (self.isFogged() && !self.isHero(object)) {
+      return false;
+    }
+    if (object.counter) {
+      return true;
+    }
+    return false;
+  }
+
+  self.showArmour = function(object) {
+    if (self.isFogged() && !self.isHero(object)) {
+      return false;
+    }
+    if (object.armour) {
+      return true;
+    }
+    return false;
   }
 
   self.findHero = function() {
@@ -109,7 +180,10 @@ function gameViewModel() {
   }
 
   self.gameOver = function() {
-    alert("Game Over!");
+    var newGame = confirm("Game Over!\nStart a New Game?");
+    if (newGame) {
+      window.location = "/new/" + self.playerName;
+    }
   }
 
   self.init();

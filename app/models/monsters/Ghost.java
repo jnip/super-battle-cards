@@ -3,6 +3,7 @@ package components;
 public class Ghost extends Monster {
   public int counter;
   protected int maxCounter;
+  protected boolean pendingAttack = false;
 
   public Ghost(int turnNum, int bossesDefeated) {
     super("Ghost", Random.nextInt(2,4) + bossesDefeated/5);
@@ -17,13 +18,18 @@ public class Ghost extends Monster {
   }
 
   public void tictok(GameBoard game, int thisX, int thisY) {
-    // If killed by poison, don't hurt Hero
     super.tictok(game, thisX, thisY);
-    if (this.isDestroyed) { return; }
-
     this.counter--;
     if (this.counter == 0) {
       this.counter = this.maxCounter;
+      this.pendingAttack = true;
+    }
+  }
+
+  public void afterTictok(GameBoard game, int thisX, int thisY) {
+    if (this.isDestroyed) { return; }
+    if (this.pendingAttack) {
+      this.pendingAttack = false;
       game.hero.takeDamage(1);
     }
   }

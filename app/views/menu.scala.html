@@ -1,0 +1,23 @@
+@(css: String)
+
+@main("Super Battle Cards") {
+<div class="center">
+  <form id="playerForm">
+    <label for="name">Player Name</label>
+    <input id="name" name="name" type="text">
+    <button type="submit" disabled="true">Confirm</button>
+  </form>
+
+  <form id="gameOptions" hidden>
+    <h1 id="name"></h1>
+    <button id="continue">Continue Game</button>
+    <button id="new">New Game</button>
+    <button id="replay">Watch Replay</button>
+  </form>
+</div>
+}
+
+<link rel="stylesheet" media="screen" href="@css">
+
+<script src="@routes.Assets.versioned("javascripts/menu.js")" type="text/javascript"></script>
+

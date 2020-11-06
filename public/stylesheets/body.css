@@ -1,12 +1,11 @@
 #board-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
+  margin: auto;
 }
 
 .inner-container > .wrap {
   position: relative;
-  display: flex;
-  height: 100%;
+  flex-basis: 0;
+  flex-grow: 1;
 }

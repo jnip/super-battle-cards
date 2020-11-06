@@ -27,6 +27,12 @@ public class GameBoardComponent {
 
   // what happens after play takes a turn
   public void tictok(GameBoard game, int thisX, int thisY) {
+    // State update
+  }
+  public void beforeTictok(GameBoard game, int thisX, int thisY) {
+  }
+  public void afterTictok(GameBoard game, int thisX, int thisY) {
+    // Component activation (e.g. explosion or deal damage to hero)
   }
 
   // what happens after hero steps on this tile

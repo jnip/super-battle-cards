@@ -2,7 +2,7 @@ package components;
 
 public class DefaultBoss extends Boss {
   public DefaultBoss(int turnNum, int bossesDefeated) {
-     super("DefaultBoss", (bossesDefeated+12)*2);
+     super("DefaultBoss", bossesDefeated+12);
   }
 
   // Load from database
