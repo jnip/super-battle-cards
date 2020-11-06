@@ -1,20 +1,35 @@
+html {
+  height: 90%;
+}
+body {
+  height: 100%;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 form {
-  width: 40ex;
+  width: 75%;
   background-color: lightgrey;
-  border-radius: 5px;
-  margin: auto;
-  padding-bottom: 2ex;
+  border-radius: 2vh;
+  padding-bottom: 5vh;
 }
 
 form > * {
   display: block;
   margin: auto;
   text-align: center;
-  line-height: 5ex;
-  height: 5ex;
+  font-size: 9vw;
+  width: 75%;
+  max-height: 20vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
 }
 
-form > button {
-  margin-top: 2ex;
-  margin-bottom: 2ex;
+#gameOptions button {
+  font-size: 4.3vw;
 }
+

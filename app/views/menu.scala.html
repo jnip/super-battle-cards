@@ -1,8 +1,7 @@
 @(css: String)
 
-<link rel="stylesheet" media="screen" href="@css">
-
 @main("Super Battle Cards") {
+<div class="center">
   <form id="playerForm">
     <label for="name">Player Name</label>
     <input id="name" name="name" type="text">
@@ -15,7 +14,10 @@
     <button id="new">New Game</button>
     <button id="replay">Watch Replay</button>
   </form>
+</div>
 }
+
+<link rel="stylesheet" media="screen" href="@css">
 
 <script src="@routes.Assets.versioned("javascripts/menu.js")" type="text/javascript"></script>
 
