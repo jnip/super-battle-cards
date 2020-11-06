@@ -117,7 +117,7 @@ public class HomeController extends Controller {
           }
           // Save game
           if (board.isDirty) {
-            ws.pushSave(player, gameId, board);
+            ws.pushSave(player, gameId, board, false);
           }
           // Send updated board back
           return ok(board.toJSON());

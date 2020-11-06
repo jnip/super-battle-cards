@@ -59,7 +59,7 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
     return (CompletableFuture<String>)(request.get().thenApply(r -> r.getBody()));
   }
 
-  public void pushSave(String player, int gameId, GameBoard board) {
+  public void pushSave(String player, int gameId, GameBoard board, boolean waitForCompletion) {
     if (this.databaseURL.equals("")) { return; }
     int index = board.turn;
     int kills = board.bossesKilled;
@@ -71,7 +71,14 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
       + player +"/save/"+ gameId +"/move_"+ formattedIndex +"_"+kills+".json";
     String data = board.toJSON(true);
     WSRequest request = this.ws.url(url);
-    request.put(data);
+    CompletionStage<WSResponse> promise = request.put(data);
+
+    if (waitForCompletion) {
+      try {
+        WSResponse response = ((CompletableFuture<WSResponse>)promise).get();
+      }
+      catch (Exception e) {};
+    }
   }
 
   public int getGameCount(String player) {
@@ -101,7 +108,7 @@ public class WebService implements WSBodyReadables, WSBodyWritables {
   public int saveNewGame(String player, GameBoard game) {
     int numGames = incrementGameCount(player);
     int gameId = numGames - 1;
-    this.pushSave(player, gameId, game);
+    this.pushSave(player, gameId, game, true);
     return gameId;
   }
 }
