@@ -1,5 +1,7 @@
 ## png files to be added here
  - favicon2
+ 
+###### Ideal Resolution: 244 x 352
  - SBC_Arrow
  - SBC_Barrel
  - SBC_Bomb
