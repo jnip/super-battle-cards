@@ -9,7 +9,7 @@ To run this: Open the Command Prompt at the root of this project and type "sbt r
 ### Requirements
 ###### In order to run this app there are a couple of things that must be added.
  - You must supply your own assets (see public/images/README.md)
- - You must connect it to your own database (NoSQL may work out of the box) at models/.helper/WebService.java
+ - You must connect it to your own database at app/models/.database. Create classes that extend Database.java and DatabaseInterface.java.
 
 ### Version 1.0
 ###### Limitations
