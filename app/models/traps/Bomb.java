@@ -9,12 +9,6 @@ public class Bomb extends Trap {
     this.counter = Random.nextInt(5,7);
   }
 
-  // Load from database
-  public Bomb(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.counter--;
     if (this.counter == 0) {

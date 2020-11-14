@@ -6,12 +6,6 @@ public class Fireball extends Skill {
     super("Fireball", (10+bossesDefeated)/2);
   }
 
-  // Load from database
-  public Fireball(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void interactWithHero(Hero hero, GameBoard game) {
     // Get hero location
     int[] heroLocation = findHero(hero, game);

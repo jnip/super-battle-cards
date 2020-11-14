@@ -1,10 +1,7 @@
-package database;
-
+package components;
 import play.libs.ws.*;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
-import components.GameBoard;
-import components.DataInterface;
 
 public abstract class Database {
   abstract public void updateSettings(String player, int gameId);
@@ -15,13 +12,16 @@ public abstract class Database {
   abstract String urlGETForTurn(int index);
   abstract String urlGET();
   
+  public String error = null;
   final WSClient ws;
+  final DatabaseInterface dbI;
   GameBoard fetchedGame;
   String player;
   int gameId;
   
-  public Database(WSClient ws) {
+  public Database(WSClient ws, DatabaseInterface dbI) {
     this.ws = ws;
+    this.dbI = dbI;
     this.fetchedGame = null;
     this.player = null;
     this.gameId = -1;
@@ -64,9 +64,9 @@ public abstract class Database {
     String dataString = this.fetch(url);
 
     // Parse data string
-    DataInterface dataObj = new DataInterface(dataString);
-    this.fetchedGame = (dataObj.isValid)? 
-      new GameBoard(dataObj.getBoard(), dataObj.getIndex(), dataObj.getKills())
+    this.dbI.loadData(dataString);
+    this.fetchedGame = (this.dbI.isDataValid)? 
+      new GameBoard(this.dbI.getBoard(), this.dbI.getIndex(), this.dbI.getKills())
       : null;
     return this.fetchedGame;
   }
@@ -99,11 +99,20 @@ public abstract class Database {
   private String fetch(String url) {
     try {
       WSRequest request = this.ws.url(url);
-      CompletionStage<String> future = request.get().thenApply(r -> r.getBody());
-      String dataString = ((CompletableFuture<String>) future).get();
-      return dataString;
+      CompletionStage<WSResponse> future = request.get();
+      WSResponse response = ((CompletableFuture<WSResponse>) future).get();
+
+      boolean isSuccess = (response.getStatus() >= 100 && response.getStatus() <= 299);
+      if (isSuccess) {
+        return response.getBody();
+      }
+      else {
+        this.error = response.getBody();
+        return null;
+      }
     }
     catch (Exception e) {
+      this.error = e.toString();
       return null;
     }
   }

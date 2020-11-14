@@ -11,12 +11,6 @@ public class Ghost extends Monster {
     this.counter = this.maxCounter;
   }
 
-  // Load from database
-  public Ghost(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void tictok(GameBoard game, int thisX, int thisY) {
     super.tictok(game, thisX, thisY);
     this.counter--;

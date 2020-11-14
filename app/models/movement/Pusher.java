@@ -8,12 +8,6 @@ public class Pusher extends Movement {
     this.state=0;
   }
 
-  // Load from database
-  public Pusher(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.state++;
     if (this.state==4) { this.state=0; }

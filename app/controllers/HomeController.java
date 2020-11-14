@@ -26,6 +26,7 @@ public class HomeController extends Controller {
     public Result newGame(String player) {
       GameBoard board = new GameBoard();
       int newGameId = ws.saveNewGame(player, board);
+      if (newGameId < 0) { return badRequest(this.ws.latestError); }
       return redirect(controllers.routes.HomeController.showGame(player, newGameId));
     }
 

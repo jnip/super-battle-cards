@@ -1,15 +1,13 @@
-package database;
-
+package components;
 import play.libs.ws.*;
 import javax.inject.Inject;
-import components.GameBoard;
 
 public class FirebaseDatabase extends Database {
   private String urlPrefix = "https://super-battle-cards.firebaseio.com";
 
   @Inject
   public FirebaseDatabase(WSClient ws) {
-    super(ws);
+    super(ws, new FirebaseInterface());
   }
 
   public void updateSettings(String player, int gameId) {
