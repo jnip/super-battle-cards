@@ -18,12 +18,6 @@ public class Mummy extends Monster {
     this.counter = this.maxCounter;
   }
 
-  // Load from database
-  public Mummy(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.counter--;
 

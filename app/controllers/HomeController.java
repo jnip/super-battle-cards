@@ -1,11 +1,9 @@
 package controllers;
 
-import play.mvc.*;
-import java.util.Optional;
-import components.*;
 import javax.inject.Inject;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CompletableFuture;
+import java.util.Optional;
+import play.mvc.*;
+import components.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -13,12 +11,10 @@ import java.util.concurrent.CompletableFuture;
  */
 public class HomeController extends Controller {
     public WebService ws;
-    public Application ac;
 
     @Inject
-    public HomeController(WebService ws, Application ac) {
+    public HomeController(WebService ws) {
       this.ws = ws;
-      this.ac = ac;
     }
 
     public Result showMenu(Http.Request request) {
@@ -30,6 +26,7 @@ public class HomeController extends Controller {
     public Result newGame(String player) {
       GameBoard board = new GameBoard();
       int newGameId = ws.saveNewGame(player, board);
+      if (newGameId < 0) { return badRequest(this.ws.latestError); }
       return redirect(controllers.routes.HomeController.showGame(player, newGameId));
     }
 
@@ -51,7 +48,7 @@ public class HomeController extends Controller {
 
     public Result getMoveCount(String name, int gameId) {
       try {
-        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId));
+        GameBoard board = ws.getSave(name, gameId);
         return (board == null)?badRequest("No such game."):ok(""+board.turn);
       }
       catch (Exception e) {
@@ -63,7 +60,7 @@ public class HomeController extends Controller {
 
     public Result getBoard(String name, int gameId, int moveNum) {
       try {
-        GameBoard board = this.getBoardFromFuture(ws.getSave(name, gameId, moveNum));
+        GameBoard board = ws.getSave(name, gameId, moveNum);
         return (board == null)?badRequest("No such game."):ok(board.toJSON());
       }
       catch (Exception e) {
@@ -73,16 +70,6 @@ public class HomeController extends Controller {
       }
     }
 
-    private GameBoard getBoardFromFuture(CompletableFuture<String> future) throws Exception {
-      String data = future.get();
-      DataInterface dataObj = new DataInterface(data);
-      GameBoard board = null;
-      if (dataObj.isValid) {
-        board = new GameBoard(dataObj.getBoard(), dataObj.getIndex(), dataObj.getKills());
-      }
-      return board;
-    }
-
     public Result showGame(Http.Request request, String name, int id) {
       return (this.isKindleRequest(request))? 
         ok(views.html.kindle.render()):
@@ -90,43 +77,19 @@ public class HomeController extends Controller {
     }
 
     public Result registerAction(String player, int gameId, String playerMove) {
-        // Load game from database and Execute move
-        CompletableFuture<String> promiseOfData = ws.getSave(player, gameId);
-        if (promiseOfData == null) {
-          return badRequest("Database not set up.");
+        // Load game from database
+        GameBoard game = ws.getSave(player, gameId);
+        if (game == null) {
+          return badRequest("No such game.");
         }
-        CompletableFuture<GameBoard> promiseOfGame = promiseOfData.thenApply(body -> {
-          DataInterface dataObj = new DataInterface(body);
-          GameBoard board;
-          // If missing or corrupted save
-          if (!dataObj.isValid) {
-            board = null;
-          }
-          // Otherwise: Load data and Execute move
-          else {
-            board = new GameBoard(dataObj.getBoard(), dataObj.getIndex(), dataObj.getKills());
-            board.executeMove(playerMove);
-          }
-          return board;
-        });
-        
-        try {
-          GameBoard board = promiseOfGame.get();
-          if (board == null) {
-            return badRequest("No such game.");
-          }
-          // Save game
-          if (board.isDirty) {
-            ws.pushSave(player, gameId, board, false);
-          }
-          // Send updated board back
-          return ok(board.toJSON());
+        // Execute move. Save to database and return result
+        game.executeMove(playerMove);
+        if (game.isDirty) {
+          ws.pushSave(false);
         }
-        catch (Exception e){
-          System.out.println(e);
-          return ok(e.toString());
-        }
+        return ok(game.toJSON());
     }
+
     private boolean isKindleRequest(Http.Request request) {
       Optional<String> userAgent = request.getHeaders().get("User-Agent");
       Boolean fromKindle = false;

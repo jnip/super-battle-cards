@@ -10,12 +10,6 @@ public class Path extends Movement {
     this.counter = (this.state==0)?0:Random.nextInt(1,3);
   }
 
-  // Load from database
-  public Path(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   // [allow travel, increment time]
   public boolean[] attemptTravelHere() {
     boolean canTravel = (this.state == 0);

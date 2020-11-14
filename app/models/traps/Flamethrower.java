@@ -14,12 +14,6 @@ public class Flamethrower extends Trap {
     this.counter = this.maxCounter;
   }
 
-  // Load from database
-  public Flamethrower(String data) {
-    this(0, 0);
-    DataInterface.apply(data, this);
-  }
-
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.counter--;
     this.state = (this.state == 0)?1:0;
