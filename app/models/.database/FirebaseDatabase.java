@@ -10,11 +10,6 @@ public class FirebaseDatabase extends Database {
     super(ws, new FirebaseInterface());
   }
 
-  public void updateSettings(String player, int gameId) {
-    this.player = player;
-    this.gameId = gameId;
-  }
-
   public int saveNewGame(String player, GameBoard game) {
     int numGames = this.incrementGameCount(player);
     if (numGames < 0) { return -1; }
@@ -31,9 +26,6 @@ public class FirebaseDatabase extends Database {
     return true;
   }
 
-  String gameToDataString(GameBoard game) {
-    return game.toJSON(true);
-  }
   String urlPUT(GameBoard game) {
     return urlPUTPrefix() + tenCharFormat(game.turn) + "_" + game.bossesKilled + ".json";
   }

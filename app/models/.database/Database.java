@@ -4,9 +4,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class Database {
-  abstract public void updateSettings(String player, int gameId);
-  abstract public int saveNewGame(String player, GameBoard game);
-  abstract String gameToDataString(GameBoard game);
+  abstract public int saveNewGame(String player, GameBoard game); //returns the id of the new game
   abstract String urlPUT(GameBoard game);
   abstract String urlGETGameCount(String player);
   abstract String urlGETForTurn(int index);
@@ -25,6 +23,11 @@ public abstract class Database {
     this.fetchedGame = null;
     this.player = null;
     this.gameId = -1;
+  }
+
+  public void updateSettings(String player, int gameId) {
+    this.player = player;
+    this.gameId = gameId;
   }
 
   public CompletableFuture<WSResponse> update() {
@@ -79,7 +82,7 @@ public abstract class Database {
     if (!shouldUpdate) {
       return null;
     }
-    String data = this.gameToDataString(game);
+    String data = this.dbI.gameToString(game);
     WSRequest request = this.ws.url(this.urlPUT(game));
     return (CompletableFuture<WSResponse>) request.put(data);
   }

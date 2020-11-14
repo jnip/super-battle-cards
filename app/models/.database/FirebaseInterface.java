@@ -25,7 +25,7 @@ public class FirebaseInterface extends DatabaseInterface {
     return Integer.parseInt(kills);
   }
 
-  public String getData(String raw) {
+  public String extractGameBoardString(String raw) {
     int killsLength = (""+this.getKills(raw)).length();
     return raw.substring(10+indexLength+killsLength, raw.length()-1);
   }
@@ -102,5 +102,9 @@ public class FirebaseInterface extends DatabaseInterface {
       return "_";
     }
     return data.substring(index+1, endIndex);
+  }
+
+  public String gameToString(GameBoard game) {
+    return game.toJSON(true);
   }
 }

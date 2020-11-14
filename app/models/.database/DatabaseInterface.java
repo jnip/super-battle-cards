@@ -4,12 +4,18 @@ import java.lang.reflect.*;
 import java.lang.Class;
 
 public abstract class DatabaseInterface {
-  abstract public HashMap parseObject(String data);
-  abstract public String[][][] parseBoard(String data);
-  abstract public boolean isValid(String raw);
-  abstract public int getIndex(String raw);
-  abstract public int getKills(String raw);
-  abstract public String getData(String raw);
+  abstract public boolean isValid(String raw); // Is raw data parsable
+  abstract public int getIndex(String raw); // Get turn/move index from raw data
+  abstract public int getKills(String raw); // Get hero kills from raw data
+  abstract public String extractGameBoardString(String raw); // Get string representation of the gameboard
+
+  //[0][i][j] stores the name of game component (idential to a class in package components)
+  //[1][i][j] stores the a String that represents the associated game component
+  abstract public String[][][] parseBoard(String gameboardString);
+  abstract public HashMap parseObject(String stringRepresentation); // key, value pair of game compenent properties
+  
+  // String representation of the game: to save into database
+  abstract public String gameToString(GameBoard game); 
 
   private String raw;
   private int turnIndex;
@@ -27,7 +33,7 @@ public abstract class DatabaseInterface {
     if (this.isDataValid) {
       this.turnIndex = this.getIndex(rawData);
       this.bossKills = this.getKills(rawData);
-      this.data = this.getData(rawData);
+      this.data = this.extractGameBoardString(rawData);
     }
   }
 
@@ -95,7 +101,7 @@ public abstract class DatabaseInterface {
     return board;
   }
 
-  // Used by object contructor to load data
+  // Load properties into GameBoardComponent object
   protected void apply(String data, GameBoardComponent obj) {
     HashMap<String, String> map = this.parseObject(data);
 
