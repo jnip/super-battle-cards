@@ -11,6 +11,7 @@ public class Ghost extends Monster {
     this.counter = this.maxCounter;
   }
 
+  @Override
   public void tictok(GameBoard game, int thisX, int thisY) {
     super.tictok(game, thisX, thisY);
     this.counter--;
@@ -20,6 +21,7 @@ public class Ghost extends Monster {
     }
   }
 
+  @Override
   public void afterTictok(GameBoard game, int thisX, int thisY) {
     if (this.isDestroyed) { return; }
     if (this.pendingAttack) {

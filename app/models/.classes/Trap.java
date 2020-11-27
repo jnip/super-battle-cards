@@ -1,6 +1,6 @@
 package components;
 
-public class Trap extends GameBoardComponent {
+public abstract class Trap extends GameBoardComponent {
   public int value;
 
   public Trap(String trapName, int trapValue) {
@@ -9,6 +9,7 @@ public class Trap extends GameBoardComponent {
   }
 
   // Weaken traps when damage is dealt
+  @Override
   public void takeDamage(int damage) {
     this.value -= damage;
     if (this.value <= 0) {

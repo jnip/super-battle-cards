@@ -7,10 +7,4 @@ public class Skeleton extends Monster {
       + Random.nextInt(-1*(10+bossesDefeated)/4, 0)
       + turnNum/75);
   }
-
-  // Deprecated - no longer used; instead use JSON.stringify
-  public String toJSON() {
-    String skeletonJSON = JSON.stringify(this, Skeleton.class);
-    return JSON.merge(skeletonJSON, super.toJSON());
-  }
 }

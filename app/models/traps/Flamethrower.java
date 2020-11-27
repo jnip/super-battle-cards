@@ -54,4 +54,7 @@ public class Flamethrower extends Trap {
     }
     return java.util.Arrays.copyOfRange(result, 0, count);
   }
+
+  public void interactWithHero(Hero hero, GameBoard game) {
+  }
 }

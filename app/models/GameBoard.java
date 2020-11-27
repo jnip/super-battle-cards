@@ -287,7 +287,7 @@ public class GameBoard {
       boolean canTravel = travelPermission[0];
       boolean incrementTime = travelPermission[1];
       // To prevent component from being consumed, we pass back an empty GameBoardComponent
-      if (!canTravel) { return (incrementTime)?new GameBoardComponent():null; }
+      if (!canTravel) { return (incrementTime)?new EmptyComponent():null; }
     }
 
     // Move Hero and get the existing object at the location coordinates

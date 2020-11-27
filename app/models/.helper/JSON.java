@@ -54,7 +54,7 @@ public class JSON {
     result += "}";
     return result;
   }
-  // Deprecated
+
   public static String merge(String JSON_a, String JSON_b) {
     if (JSON_a.length() <= 2) { return JSON_b; }
     if (JSON_b.length() <= 2) { return JSON_a; }

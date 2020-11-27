@@ -4,7 +4,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class Database {
-  abstract public int saveNewGame(String player, GameBoard game); //returns the id of the new game
+  // require synchronous implementation. returns id of the new game
+  abstract public int saveNewGame(String player, GameBoard game);
   abstract String urlPUT(GameBoard game);
   abstract String urlGETGameCount(String player);
   abstract String urlGETForTurn(int index);

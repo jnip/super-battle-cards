@@ -10,6 +10,7 @@ public class Gate extends Movement {
     this.counter = Random.nextInt(2,5);
   }
 
+  @Override
   public void tictok(GameBoard game, int thisX, int thisY) {
     if (this.state == 1) {
       this.counter--;
@@ -20,6 +21,7 @@ public class Gate extends Movement {
   }
 
   // [allow travel, increment time]
+  @Override
   public boolean[] attemptTravelHere() {
     boolean canTravel = (this.state == 0);
     return new boolean[] {canTravel, canTravel};

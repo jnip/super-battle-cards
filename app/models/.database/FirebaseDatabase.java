@@ -15,7 +15,7 @@ public class FirebaseDatabase extends Database {
     if (numGames < 0) { return -1; }
     int gameId = numGames - 1;
     this.updateSettings(player, gameId);
-    this.forceUpdate(game);
+    this.forceUpdateAndWait(game);
     return gameId;
   }
 

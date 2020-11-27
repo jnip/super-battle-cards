@@ -1,6 +1,6 @@
 package components;
 
-public class Hero extends GameBoardComponent {
+public abstract class Hero extends GameBoardComponent {
   public int maxHealth;
   public int health;
   public int armour = 0;
@@ -82,6 +82,7 @@ public class Hero extends GameBoardComponent {
   }
 
   // [allow travel, increment time]
+  @Override
   public boolean[] attemptTravelHere() {
     return new boolean[] {false, false};
   }
@@ -93,4 +94,6 @@ public class Hero extends GameBoardComponent {
       this.fogCounter--;
     }
   }
+
+  public void interactWithHero(Hero hero, GameBoard game) {}
 }

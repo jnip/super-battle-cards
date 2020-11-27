@@ -1,6 +1,6 @@
 package components;
 
-public class Monster extends GameBoardComponent {
+public abstract class Monster extends GameBoardComponent {
   public int health;
   public int poisonCount = 0;
 
@@ -9,7 +9,7 @@ public class Monster extends GameBoardComponent {
     this.health = initialHP;
   }
 
-  // Reduces HP
+  @Override
   public void takeDamage(int damage) {
     if (damage > 0) {
       this.health -= (damage > this.health)?this.health:damage;
@@ -39,11 +39,5 @@ public class Monster extends GameBoardComponent {
     this.health = 0;
     hero.takeDamage(damageToHero);
     this.isDestroyed = true;
-  }
-
-  // Deprecated - no longer used; instead use JSON.stringify
-  public String toJSON() {
-    String monsterJSON = JSON.stringify(this, Monster.class);
-    return JSON.merge(monsterJSON, super.toJSON());
   }
 }

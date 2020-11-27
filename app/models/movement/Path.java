@@ -11,6 +11,7 @@ public class Path extends Movement {
   }
 
   // [allow travel, increment time]
+  @Override
   public boolean[] attemptTravelHere() {
     boolean canTravel = (this.state == 0);
     if (!canTravel) {

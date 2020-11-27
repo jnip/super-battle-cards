@@ -44,4 +44,7 @@ public class Bomb extends Trap {
     }
     return result;
   }
+
+  public void interactWithHero(Hero hero, GameBoard game) {
+  }
 }

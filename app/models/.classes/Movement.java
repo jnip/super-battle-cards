@@ -1,6 +1,6 @@
 package components;
 
-public class Movement extends GameBoardComponent {
+public abstract class Movement extends GameBoardComponent {
   public Movement(String tileName) {
     super(ComponentType.MOVEMENT, tileName);
   }
@@ -9,12 +9,12 @@ public class Movement extends GameBoardComponent {
   public void interactWithHero(Hero hero, GameBoard game) {
   }
 
-  // [allow travel, increment time]
-  public boolean[] attemptTravelHere() {
-    return new boolean[] {true, true};
+  // Cannot be hurt or destroyed from damage
+  @Override
+  public void takeDamage(int damage) {
   }
 
-  // Cannot be hurt or destroyed from damage
-  public void takeDamage(int damage) {
+  // Expected override; nothing happens on default
+  public void tictok(GameBoard game, int thisX, int thisY){
   }
 }

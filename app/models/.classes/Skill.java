@@ -1,6 +1,6 @@
 package components;
 
-public class Skill extends GameBoardComponent {
+public abstract class Skill extends GameBoardComponent {
   public int value;
   public int state; //Hidden in barrel
 
@@ -10,8 +10,7 @@ public class Skill extends GameBoardComponent {
     this.state = (Random.nextInt(1,6)==1)?1:0;
   }
 
-  public void interactWithHero(Hero hero, GameBoard game) {
-    // Nothing, GameBoard takes care of all Skill procs
+  public void tictok(GameBoard game, int thisX, int thisY) {
   }
 
   // [allow travel, increment time]

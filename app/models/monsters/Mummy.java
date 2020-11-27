@@ -18,6 +18,7 @@ public class Mummy extends Monster {
     this.counter = this.maxCounter;
   }
 
+  @Override
   public void tictok(GameBoard game, int thisX, int thisY) {
     this.counter--;
 

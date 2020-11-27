@@ -1,6 +1,6 @@
 package components;
 
-public class Item extends GameBoardComponent {
+public abstract class Item extends GameBoardComponent {
   public int value;
   public int state; //Hidden in barrel
 
@@ -11,6 +11,7 @@ public class Item extends GameBoardComponent {
   }
 
   // [allow travel, increment time]
+  @Override
   public boolean[] attemptTravelHere() {
     boolean canTravel = (this.state == 0);
     if (!canTravel) {
@@ -18,4 +19,6 @@ public class Item extends GameBoardComponent {
     }
     return new boolean[] {canTravel, true};
   }
+
+  public void tictok(GameBoard game, int thisX, int thisY) {};
 }
